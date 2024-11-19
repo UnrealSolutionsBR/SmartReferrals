@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Salir si se accede directamente.
 }
 
-class Smart_Referrals {
+class Smart_Referrals_Code {
 
     public function __construct() {
         $this->define_constants();

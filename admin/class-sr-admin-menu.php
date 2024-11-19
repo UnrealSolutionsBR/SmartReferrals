@@ -11,34 +11,9 @@ class SR_Admin_Menu {
     }
 
     public function add_admin_menu() {
-        add_menu_page(
-            'Smart Referrals',
-            'Smart Referrals',
-            'manage_options',
-            'sr-dashboard',
-            array( 'SR_Dashboard', 'display' ),
-            'dashicons-megaphone',
-            6
-        );
-
-        add_submenu_page(
-            'sr-dashboard',
-            'General Settings',
-            'General Settings',
-            'manage_options',
-            'sr-settings',
-            array( 'SR_Settings', 'display' )
-        );
-
-        add_submenu_page(
-            'sr-dashboard',
-            'Referrals',
-            'Referrals',
-            'manage_options',
-            'sr-referrals',
-            array( 'SR_Referrals', 'display' )
-        );
+        // Tu código aquí...
     }
 }
 
-new SR_Admin_Menu();
+// Elimina la instanciación de la clase aquí
+// new SR_Admin_Menu();

@@ -12,12 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Salir si se accede directamente.
 }
 
+// Incluir las clases de 'includes/' antes de cualquier otra cosa
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-referral-code.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-woocommerce-integration.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-shortcodes.php';
+
 class Smart_Referrals {
 
     public function __construct() {
         $this->define_constants();
         $this->includes();
         $this->init_hooks();
+        $this->init_admin();
     }
 
     private function define_constants() {
@@ -26,10 +32,8 @@ class Smart_Referrals {
     }
 
     private function includes() {
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-referral-code.php';
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-woocommerce-integration.php';
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-shortcodes.php';
-
+        // Mover las inclusiones de 'includes/' fuera de este método
+        // Incluir las clases de 'admin/' aquí
         if ( is_admin() ) {
             require_once SR_PLUGIN_DIR . 'admin/class-sr-admin-menu.php';
             require_once SR_PLUGIN_DIR . 'admin/class-sr-dashboard.php';
@@ -46,6 +50,13 @@ class Smart_Referrals {
         add_action( 'init', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
+    }
+
+    private function init_admin() {
+        if ( is_admin() ) {
+            new SR_Admin_Menu();
+            // Instanciar otras clases de administración si es necesario
+        }
     }
 
     public function enqueue_admin_styles() {

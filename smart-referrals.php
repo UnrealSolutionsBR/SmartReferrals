@@ -39,26 +39,23 @@ class Smart_Referrals {
     }
 
     private function init_hooks() {
+        // Hooks de activación y acciones
         register_activation_hook( __FILE__, array( 'SR_Referral_Code', 'generate_referral_codes_for_existing_users' ) );
         add_action( 'user_register', array( 'SR_Referral_Code', 'generate_referral_code' ), 10, 1 );
         add_action( 'init', array( 'SR_Shortcodes', 'register_shortcodes' ) );
         add_action( 'init', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
     }
-}
 
-private function init_hooks() {
-    // ... (otros hooks)
-    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-    add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
-}
+    public function enqueue_admin_styles() {
+        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '1.0.0' );
+    }
 
-public function enqueue_admin_styles() {
-    wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '1.0.0' );
-}
+    public function enqueue_frontend_styles() {
+        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );
+    }
 
-public function enqueue_frontend_styles() {
-    wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );
 }
-
 
 new Smart_Referrals();

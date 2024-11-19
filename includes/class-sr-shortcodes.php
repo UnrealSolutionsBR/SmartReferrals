@@ -8,6 +8,7 @@ class SR_Shortcodes {
 
     public static function register_shortcodes() {
         add_shortcode( 'sr_referral_url', array( __CLASS__, 'referral_url_shortcode' ) );
+        add_shortcode( 'sr_referralcode_in_session', array( __CLASS__, 'referralcode_in_session_shortcode' ) ); // Nuevo shortcode
     }
 
     public static function referral_url_shortcode() {
@@ -20,4 +21,14 @@ class SR_Shortcodes {
         }
         return '';
     }
+
+    // Función para el nuevo shortcode
+    public static function referralcode_in_session_shortcode() {
+        $referral_code = WC()->session->get( 'sr_referral_code' );
+        if ( $referral_code ) {
+            return esc_html( $referral_code );
+        }
+        return '';
+    }
+
 }

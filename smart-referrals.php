@@ -68,6 +68,14 @@ class Smart_Referrals {
     public function enqueue_frontend_styles() {
         wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );
     }
+    public function enqueue_frontend_scripts() {
+        wp_enqueue_script( 'sr-referral-copylink-script', SR_PLUGIN_URL . 'assets/js/referral-copylink.js', array( 'jquery' ), '1.0.0', true );
+
+        // Localize script for translation and data
+        wp_localize_script( 'sr-referral-copylink-script', 'srCopyLink', array(
+            'copiedText' => __( 'El enlace se copió al portapapeles exitosamente', 'smart-referrals' ),
+        ) );
+    }
 
 }
 

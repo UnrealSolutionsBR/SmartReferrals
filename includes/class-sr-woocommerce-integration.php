@@ -81,7 +81,7 @@ class SR_WooCommerce_Integration {
 }
 
 // Hooks
-add_action( 'init', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
+add_action( 'template_redirect', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
 add_action( 'woocommerce_before_cart', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
 add_action( 'woocommerce_before_checkout_form', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
 add_filter( 'woocommerce_coupon_is_valid_for_user', array( 'SR_WooCommerce_Integration', 'validate_referral_coupon_for_user' ), 10, 3 );

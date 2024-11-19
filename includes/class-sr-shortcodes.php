@@ -8,7 +8,7 @@ class SR_Shortcodes {
 
     public static function register_shortcodes() {
         add_shortcode( 'sr_referral_url', array( __CLASS__, 'referral_url_shortcode' ) );
-        add_shortcode( 'sr_referralcode_in_session', array( __CLASS__, 'referralcode_in_session_shortcode' ) ); // Nuevo shortcode
+        add_shortcode( 'sr_referralcode_in_session', array( __CLASS__, 'referralcode_in_session_shortcode' ) );
     }
 
     public static function referral_url_shortcode() {
@@ -22,9 +22,29 @@ class SR_Shortcodes {
         return '';
     }
 
-    // Función para el nuevo shortcode
     public static function referralcode_in_session_shortcode() {
-        $referral_code = WC()->session->get( 'sr_referral_code' );
+        $referral_code = null;
+
+        // Intentar obtener el código de la sesión de WooCommerce
+        if ( class_exists( 'WooCommerce' ) && isset( WC()->session ) ) {
+            $referral_code = WC()->session->get( 'sr_referral_code' );
+        }
+
+        // Si no está en la sesión de WooCommerce, intentar obtenerlo de la sesión PHP
+        if ( ! $referral_code ) {
+            if ( ! session_id() ) {
+                session_start();
+            }
+            if ( isset( $_SESSION['sr_referral_code'] ) ) {
+                $referral_code = $_SESSION['sr_referral_code'];
+            }
+        }
+
+        // Si no está en la sesión PHP, intentar obtenerlo de la cookie
+        if ( ! $referral_code && isset( $_COOKIE['sr_referral_code'] ) ) {
+            $referral_code = sanitize_text_field( $_COOKIE['sr_referral_code'] );
+        }
+
         if ( $referral_code ) {
             return esc_html( $referral_code );
         }

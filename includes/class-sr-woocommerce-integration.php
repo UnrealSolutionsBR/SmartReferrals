@@ -7,8 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SR_WooCommerce_Integration {
 
     public static function apply_referral_coupon() {
-        if ( isset( $_GET['REFERRALCODE'] ) ) {
-            $referral_code = sanitize_text_field( $_GET['REFERRALCODE'] );
+        $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
+        if ( isset( $_GET[ $parameter ] ) ) {
+            $referral_code = sanitize_text_field( $_GET[ $parameter ] );
             WC()->session->set( 'sr_referral_code', $referral_code );
         }
     }

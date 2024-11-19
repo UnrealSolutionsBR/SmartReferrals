@@ -14,8 +14,8 @@ class SR_Shortcodes {
         if ( is_user_logged_in() ) {
             $user_id = get_current_user_id();
             $referral_code = get_user_meta( $user_id, 'sr_referral_code', true );
-            $parameter = get_option( 'sr_referral_parameter', '?REFERRALCODE=' );
-            $url = home_url( '/' ) . $parameter . $referral_code;
+            $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
+            $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
             return esc_url( $url );
         }
         return '';

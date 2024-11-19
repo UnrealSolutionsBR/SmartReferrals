@@ -1,0 +1,87 @@
+/* Estilos para el Dashboard y páginas de administración */
+
+.sr-modules-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sr-module-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(25% - 20px);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.sr-module-card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.sr-module-card h3 {
+    margin: 0 0 10px;
+}
+
+.sr-module-card p {
+    margin: 0 0 15px;
+    color: #555;
+}
+
+.sr-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.sr-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sr-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.sr-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .sr-slider {
+    background-color: #2196F3;
+}
+
+input:focus + .sr-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .sr-slider:before {
+    transform: translateX(26px);
+}
+
+.sr-slider.round {
+    border-radius: 24px;
+}
+
+.sr-slider.round:before {
+    border-radius: 50%;
+}

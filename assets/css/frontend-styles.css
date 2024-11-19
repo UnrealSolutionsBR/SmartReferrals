@@ -1,0 +1,8 @@
+/* Estilos para elementos del frontend si los hubiera */
+
+/* Por ejemplo, estilos para el shortcode de la URL de referido */
+.sr-referral-url {
+    font-size: 16px;
+    color: #333;
+    margin: 20px 0;
+}

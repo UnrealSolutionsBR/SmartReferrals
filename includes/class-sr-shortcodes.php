@@ -1,13 +1,19 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SR_Shortcodes {
 
     public static function register_shortcodes() {
+        // Remove the old shortcode
+        // add_shortcode( 'sr_referral_url', array( __CLASS__, 'referral_url_shortcode' ) );
+
+        // Add the new shortcode
         add_shortcode( 'sr_referral_copylink', array( __CLASS__, 'referral_copylink_shortcode' ) );
+
+        // Other shortcodes remain unchanged
         add_shortcode( 'sr_referralcode_in_session', array( __CLASS__, 'referralcode_in_session_shortcode' ) );
     }
 
@@ -17,6 +23,7 @@ class SR_Shortcodes {
             $referral_code = get_user_meta( $user_id, 'sr_referral_code', true );
             $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
+
             // Generate the HTML output
             ob_start();
             ?>
@@ -35,12 +42,12 @@ class SR_Shortcodes {
     public static function referralcode_in_session_shortcode() {
         $referral_code = null;
 
-        // Intentar obtener el código de la sesión de WooCommerce
+        // Try to get the code from WooCommerce session
         if ( class_exists( 'WooCommerce' ) && isset( WC()->session ) ) {
             $referral_code = WC()->session->get( 'sr_referral_code' );
         }
 
-        // Si no está en la sesión de WooCommerce, intentar obtenerlo de la sesión PHP
+        // If not in WooCommerce session, try PHP session
         if ( ! $referral_code ) {
             if ( ! session_id() ) {
                 session_start();
@@ -50,7 +57,7 @@ class SR_Shortcodes {
             }
         }
 
-        // Si no está en la sesión PHP, intentar obtenerlo de la cookie
+        // If not in PHP session, try cookie
         if ( ! $referral_code && isset( $_COOKIE['sr_referral_code'] ) ) {
             $referral_code = sanitize_text_field( $_COOKIE['sr_referral_code'] );
         }

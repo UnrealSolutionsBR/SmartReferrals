@@ -11,25 +11,25 @@ class SR_Admin_Menu {
     }
 
     public function add_admin_menu() {
-        // Añadir el menú principal
+        // Add the main menu
         add_menu_page(
-            'Smart Referrals',                   // Título de la página
-            'Smart Referrals',                   // Texto del menú
-            'manage_options',                    // Capacidad requerida
-            'sr-dashboard',                      // Slug del menú
-            array( 'SR_Dashboard', 'display' ),  // Función de callback
-            'dashicons-megaphone',               // Icono del menú
-            6                                    // Posición en el menú
+            'Smart Referrals',                   // Page title
+            'Smart Referrals',                   // Menu title
+            'manage_options',                    // Capability
+            'sr-dashboard',                      // Menu slug
+            array( 'SR_Dashboard', 'display' ),  // Callback function
+            'dashicons-megaphone',               // Menu icon
+            6                                    // Position
         );
 
-        // Añadir submenús
+        // Add submenus
         add_submenu_page(
-            'sr-dashboard',                      // Slug del menú padre
-            'Dashboard',                         // Título de la página
-            'Dashboard',                         // Texto del submenú
-            'manage_options',                    // Capacidad requerida
-            'sr-dashboard',                      // Slug del submenú
-            array( 'SR_Dashboard', 'display' )   // Función de callback
+            'sr-dashboard',                      // Parent slug
+            'Dashboard',                         // Page title
+            'Dashboard',                         // Submenu title
+            'manage_options',                    // Capability
+            'sr-dashboard',                      // Submenu slug
+            array( 'SR_Dashboard', 'display' )   // Callback function
         );
 
         add_submenu_page(

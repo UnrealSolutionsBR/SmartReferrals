@@ -1,10 +1,17 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SR_Referral_Code {
+
+    public static function generate_referral_codes_for_existing_users() {
+        $users = get_users( array( 'fields' => array( 'ID', 'user_login' ) ) );
+        foreach ( $users as $user ) {
+            self::generate_referral_code( $user->ID );
+        }
+    }
 
     public static function generate_referral_code( $user_id ) {
         // Get the old referral code

@@ -1,60 +1,55 @@
 <?php
-/*
-Plugin Name: Smart Referrals
-Author: Unreal Solutions
-Author URI: https://www.unrealsolutions.com.br
-Version: 1.0.0
-Requires at least: 6.6.2
-Description: Elevate your earnings with a powerful toolkit for effective referral management.
-*/
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; // Salir si se accede directamente.
+    exit;
 }
 
-class Smart_Referrals_Code {
+class SR_Referral_Code {
 
-    public function __construct() {
-        $this->define_constants();
-        $this->includes();
-        $this->init_hooks();
-    }
-
-    private function define_constants() {
-        define( 'SR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-        define( 'SR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-    }
-
-    private function includes() {
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-referral-code.php';
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-woocommerce-integration.php';
-        require_once SR_PLUGIN_DIR . 'includes/class-sr-shortcodes.php';
-
-        if ( is_admin() ) {
-            require_once SR_PLUGIN_DIR . 'admin/class-sr-admin-menu.php';
-            require_once SR_PLUGIN_DIR . 'admin/class-sr-dashboard.php';
-            require_once SR_PLUGIN_DIR . 'admin/class-sr-settings.php';
-            require_once SR_PLUGIN_DIR . 'admin/class-sr-referrals.php';
+    public static function generate_referral_codes_for_existing_users() {
+        $users = get_users( array( 'fields' => array( 'ID', 'user_login' ) ) );
+        foreach ( $users as $user ) {
+            self::generate_referral_code( $user->ID );
         }
     }
 
-    private function init_hooks() {
-        register_activation_hook( __FILE__, array( 'SR_Referral_Code', 'generate_referral_codes_for_existing_users' ) );
-        add_action( 'user_register', array( 'SR_Referral_Code', 'generate_referral_code' ), 10, 1 );
-        add_action( 'init', array( 'SR_Shortcodes', 'register_shortcodes' ) );
-        add_action( 'init', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
+    public static function generate_referral_code( $user_id ) {
+        $user_info = get_userdata( $user_id );
+        $username = strtoupper( substr( $user_info->user_login, 0, 6 ) );
+        $random_letters = strtoupper( substr( str_shuffle( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), 0, 3 ) );
+        $referral_code = $random_letters . $username;
+
+        update_user_meta( $user_id, 'sr_referral_code', $referral_code );
+
+        // Crear o actualizar el cupón de WooCommerce
+        self::create_or_update_woocommerce_coupon( $referral_code );
     }
 
-    public function enqueue_admin_styles() {
-        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '1.0.0' );
+    public static function create_or_update_woocommerce_coupon( $referral_code ) {
+        $discount_amount = get_option( 'sr_discount_value', 10 ); // Valor por defecto 10%
+        $coupon = new WC_Coupon( $referral_code );
+
+        // Configurar los detalles del cupón
+        $coupon->set_code( $referral_code );
+        $coupon->set_discount_type( 'percent' );
+        $coupon->set_amount( $discount_amount );
+        $coupon->set_individual_use( false );
+        $coupon->set_usage_limit( '' );
+        $coupon->set_usage_limit_per_user( '' );
+        $coupon->set_description( 'Cupón generado para el código de referido.' );
+
+        $coupon->save();
     }
 
-    public function enqueue_frontend_styles() {
-        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );
-    }
+    public static function delete_referral_code( $user_id ) {
+        $referral_code = get_user_meta( $user_id, 'sr_referral_code', true );
+        if ( $referral_code ) {
+            // Eliminar el cupón de WooCommerce
+            $coupon = new WC_Coupon( $referral_code );
+            $coupon->delete( true );
 
+            // Eliminar el código de referido del usuario
+            delete_user_meta( $user_id, 'sr_referral_code' );
+        }
+    }
 }
-
-new Smart_Referrals();

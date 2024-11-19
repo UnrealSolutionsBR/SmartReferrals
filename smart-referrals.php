@@ -12,27 +12,29 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Salir si se accede directamente.
 }
 
-// Incluir las clases de 'includes/' antes de cualquier otra cosa
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-referral-code.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-woocommerce-integration.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-sr-shortcodes.php';
+// Definir las constantes primero
+if ( ! defined( 'SR_PLUGIN_DIR' ) ) {
+    define( 'SR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+if ( ! defined( 'SR_PLUGIN_URL' ) ) {
+    define( 'SR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+
+// Incluir las clases de 'includes/' después de definir las constantes
+require_once SR_PLUGIN_DIR . 'includes/class-sr-referral-code.php';
+require_once SR_PLUGIN_DIR . 'includes/class-sr-woocommerce-integration.php';
+require_once SR_PLUGIN_DIR . 'includes/class-sr-shortcodes.php';
 
 class Smart_Referrals {
 
     public function __construct() {
-        $this->define_constants();
         $this->includes();
         $this->init_hooks();
         $this->init_admin();
     }
 
-    private function define_constants() {
-        define( 'SR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-        define( 'SR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-    }
-
     private function includes() {
-        // Mover las inclusiones de 'includes/' fuera de este método
         // Incluir las clases de 'admin/' aquí
         if ( is_admin() ) {
             require_once SR_PLUGIN_DIR . 'admin/class-sr-admin-menu.php';

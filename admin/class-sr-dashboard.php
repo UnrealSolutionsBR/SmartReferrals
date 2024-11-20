@@ -7,12 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SR_Dashboard {
 
     public static function display() {
-        ?>
-        <div class="wrap">
-            <h1><?php esc_html_e( 'Smart Referrals Dashboard', 'smart-referrals' ); ?></h1>
-            <p><?php esc_html_e( 'Welcome to the Smart Referrals plugin dashboard.', 'smart-referrals' ); ?></p>
-            <!-- Add dashboard content here -->
-        </div>
-        <?php
+        $tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'modules';
+        include SR_PLUGIN_DIR . 'admin/templates/dashboard.php';
     }
 }

@@ -13,23 +13,23 @@ class SR_Admin_Menu {
     public function add_admin_menu() {
         // Add the main menu
         add_menu_page(
-            'Smart Referrals',                   // Page title
-            'Smart Referrals',                   // Menu title
-            'manage_options',                    // Capability
-            'sr-dashboard',                      // Menu slug
-            array( 'SR_Dashboard', 'display' ),  // Callback function
-            'dashicons-megaphone',               // Menu icon
-            6                                    // Position
+            'Smart Referrals',
+            'Smart Referrals',
+            'manage_options',
+            'sr-dashboard',
+            array( 'SR_Dashboard', 'display' ),
+            'dashicons-megaphone',
+            50
         );
 
         // Add submenus
         add_submenu_page(
-            'sr-dashboard',                      // Parent slug
-            'Dashboard',                         // Page title
-            'Dashboard',                         // Submenu title
-            'manage_options',                    // Capability
-            'sr-dashboard',                      // Submenu slug
-            array( 'SR_Dashboard', 'display' )   // Callback function
+            'sr-dashboard',
+            'Dashboard',
+            'Dashboard',
+            'manage_options',
+            'sr-dashboard',
+            array( 'SR_Dashboard', 'display' )
         );
 
         add_submenu_page(
@@ -41,13 +41,16 @@ class SR_Admin_Menu {
             array( 'SR_Settings', 'display' )
         );
 
-        add_submenu_page(
-            'sr-dashboard',
-            'Referrals',
-            'Referrals',
-            'manage_options',
-            'sr-referrals',
-            array( 'SR_Referrals', 'display' )
-        );
+        // Check if the referrals module is enabled
+        if ( get_option( 'sr_referrals_module_enabled', 'yes' ) === 'yes' ) {
+            add_submenu_page(
+                'sr-dashboard',
+                'Referrals',
+                'Referrals',
+                'manage_options',
+                'sr-referrals',
+                array( 'SR_Referrals', 'display' )
+            );
+        }
     }
 }

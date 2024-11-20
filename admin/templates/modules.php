@@ -6,9 +6,12 @@
         <h3><?php esc_html_e( 'Referral Code Management', 'smart-referrals' ); ?></h3>
         <p><?php esc_html_e( 'Manage your referral codes easily.', 'smart-referrals' ); ?></p>
         <label class="sr-switch">
-            <input type="checkbox" checked>
+            <?php $module_enabled = get_option( 'sr_referrals_module_enabled', 'yes' ); ?>
+            <input type="checkbox" id="sr-module-toggle" <?php checked( $module_enabled, 'yes' ); ?>>
             <span class="sr-slider round"></span>
+            <!-- Loading circle -->
+            <div class="sr-loading-circle" style="display: none;"></div>
         </label>
     </div>
-    <!-- Añade más módulos si es necesario -->
+    <!-- Add more modules if needed -->
 </div>

@@ -3,7 +3,7 @@
 Plugin Name: Smart Referrals
 Author: Unreal Solutions
 Author URI: https://www.unrealsolutions.com.br
-Version: 2.0.1
+Version: 2.0.2
 Requires at least: 6.6.2
 Description: Elevate your earnings with a powerful toolkit for effective referral management.
 */
@@ -25,6 +25,7 @@ if ( ! defined( 'SR_PLUGIN_URL' ) ) {
 require_once SR_PLUGIN_DIR . 'includes/class-sr-referral-code.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-woocommerce-integration.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-shortcodes.php';
+require_once SR_PLUGIN_DIR . 'includes/class-sr-ajax-handler.php';
 
 class Smart_Referrals {
 
@@ -69,6 +70,11 @@ class Smart_Referrals {
     public function enqueue_admin_styles() {
         wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '1.0.0' );
     }
+    wp_localize_script( 'sr-admin-scripts', 'srAdminAjax', array(
+        'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        'nonce'   => wp_create_nonce( 'sr_admin_nonce' ),
+    ) );
+}
 
     public function enqueue_frontend_styles() {
         wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );

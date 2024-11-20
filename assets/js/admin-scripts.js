@@ -5,17 +5,17 @@ jQuery(document).ready(function($) {
         var $switchLabel = $toggle.closest('.sr-switch');
         var $slider = $switchLabel.find('.sr-slider');
         var $loadingCircle = $switchLabel.find('.sr-loading-circle');
-        
+
         // Disable the toggle to prevent rapid clicks
         $toggle.prop('disabled', true);
-        
+
         // Show loading circle and hide slider
         $slider.hide();
         $loadingCircle.show();
-        
+
         // AJAX request to update the option and menu
         $.ajax({
-            url: ajaxurl,
+            url: srAdminAjax.ajaxurl,
             type: 'POST',
             data: {
                 action: 'sr_toggle_module',
@@ -27,23 +27,17 @@ jQuery(document).ready(function($) {
                 $loadingCircle.hide();
                 $slider.show();
                 $toggle.prop('disabled', false);
-                
-                // Update the admin menu via AJAX
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'sr_update_admin_menu',
-                        security: srAdminAjax.nonce
-                    },
-                    success: function(menuHTML) {
-                        // Replace the menu with new HTML
-                        $('#adminmenu').html(menuHTML);
-                        
-                        // Animate the submenu items
-                        $('#adminmenu .wp-submenu-wrap').css('opacity', 0).animate({ opacity: 1 }, 500);
+
+                // Update the submenu item visibility
+                if (response.success && response.data) {
+                    if (response.data.enabled === 'yes') {
+                        // Show the submenu item with animation
+                        $('li.toplevel_page_sr-dashboard ul.wp-submenu li a[href="admin.php?page=sr-referrals"]').parent().fadeIn();
+                    } else {
+                        // Hide the submenu item with animation
+                        $('li.toplevel_page_sr-dashboard ul.wp-submenu li a[href="admin.php?page=sr-referrals"]').parent().fadeOut();
                     }
-                });
+                }
             }
         });
     });

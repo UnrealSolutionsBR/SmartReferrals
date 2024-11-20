@@ -8,7 +8,6 @@ class SR_Ajax_Handler {
 
     public static function init() {
         add_action( 'wp_ajax_sr_toggle_module', array( __CLASS__, 'toggle_module' ) );
-        add_action( 'wp_ajax_sr_update_admin_menu', array( __CLASS__, 'update_admin_menu' ) );
     }
 
     public static function toggle_module() {
@@ -24,24 +23,8 @@ class SR_Ajax_Handler {
             SR_Referrals::deactivate_module();
         }
 
-        wp_send_json_success();
-    }
-
-    public static function update_admin_menu() {
-        check_ajax_referer( 'sr_admin_nonce', 'security' );
-
-        // Rebuild the admin menu
-        global $menu, $submenu;
-        ob_start();
-        require( ABSPATH . 'wp-admin/menu.php' );
-        require( ABSPATH . 'wp-admin/includes/menu.php' );
-        echo '<ul id="adminmenu">';
-        _wp_menu_output( $menu, $submenu );
-        echo '</ul>';
-        $menu_html = ob_get_clean();
-
-        echo $menu_html;
-        wp_die();
+        // Return the new module status
+        wp_send_json_success( array( 'enabled' => $enabled ) );
     }
 }
 

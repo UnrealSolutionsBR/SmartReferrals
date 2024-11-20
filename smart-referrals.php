@@ -68,23 +68,22 @@ class Smart_Referrals {
     }
 
     public function enqueue_admin_styles() {
-        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '1.0.0' );
+        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '2.0.2' );
     }
     wp_localize_script( 'sr-admin-scripts', 'srAdminAjax', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'sr_admin_nonce' ),
     ) );
-}
 
     public function enqueue_frontend_styles() {
-        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '1.0.0' );
+        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '2.0.2' );
 
         // Enqueue custom styles for the referral copy link
-        wp_enqueue_style( 'sr-referral-copylink-styles', SR_PLUGIN_URL . 'assets/css/referral-copylink.css', array(), '1.0.0' );
+        wp_enqueue_style( 'sr-referral-copylink-styles', SR_PLUGIN_URL . 'assets/css/referral-copylink.css', array(), '2.0.2' );
     }
 
     public function enqueue_frontend_scripts() {
-        wp_enqueue_script( 'sr-referral-copylink-script', SR_PLUGIN_URL . 'assets/js/referral-copylink.js', array( 'jquery' ), '1.0.0', true );
+        wp_enqueue_script( 'sr-referral-copylink-script', SR_PLUGIN_URL . 'assets/js/referral-copylink.js', array( 'jquery' ), '2.0.2', true );
 
         // Localize script for translation and data
         wp_localize_script( 'sr-referral-copylink-script', 'srCopyLink', array(

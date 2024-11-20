@@ -3,7 +3,7 @@
 Plugin Name: Smart Referrals
 Author: Unreal Solutions
 Author URI: https://www.unrealsolutions.com.br
-Version: 2.0.0
+Version: 1.0.0
 Requires at least: 6.6.2
 Description: Elevate your earnings with a powerful toolkit for effective referral management.
 */
@@ -33,8 +33,12 @@ class Smart_Referrals {
         $this->init_hooks();
         $this->init_admin();
 
-        // Enqueue frontend scripts
+        // Enqueue frontend styles and scripts
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_styles' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
+
+        // Enqueue admin styles
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
     }
 
     private function includes() {

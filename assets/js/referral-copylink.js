@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
 
             // Adjust position 20px below the header
             var headerHeight = $('header').outerHeight() || $('#wpadminbar').outerHeight() || 0;
-            notification.css('top', (headerHeight + 20) + 'px');
+            notification.css('top', (headerHeight + 40) + 'px');
             notification.addClass('show');
 
             // Close notification on click

@@ -76,7 +76,10 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'selectors'  => [
                     '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}} !important; box-sizing: border-box;',
                 ],
-                'default' => 550,
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 550,
+                ],
             ]
         );
 
@@ -92,7 +95,10 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'selectors'  => [
                     '{{WRAPPER}} #sr-referral-link' => 'height: {{SIZE}}{{UNIT}};',
                 ],
-                'default' => 50,
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 50,
+                ],
             ]
         );
 
@@ -143,7 +149,10 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'selectors'  => [
                     '{{WRAPPER}} #sr-copy-button i, {{WRAPPER}} #sr-copy-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
-                'default' => 25,
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 25,
+                ],
             ]
         );
 

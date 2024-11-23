@@ -26,6 +26,34 @@ class SR_Referral_URL_Widget extends Widget_Base {
     }
 
     protected function register_controls() {
+        // Content Section: Icon
+        $this->start_controls_section(
+            'content_section',
+            [
+                'label' => __( 'Content', 'smart-referrals' ),
+                'tab'   => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'icon',
+            [
+                'label'   => __( 'Icon', 'smart-referrals' ),
+                'type'    => Controls_Manager::ICONS,
+                'default' => [
+                    'value'   => 'fas fa-copy',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid'  => [ 'copy', 'link', 'share' ],
+                    'fa-regular' => [],
+                    'fa-brands' => [],
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
         // Input Styles
         $this->start_controls_section(
             'input_styles',
@@ -46,7 +74,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 500 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box;',
+                    '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}} !important; box-sizing: border-box;',
                 ],
             ]
         );
@@ -135,18 +163,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 10, 'max' => 100 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-copy-button img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'button_icon_color',
-            [
-                'label'     => __( 'Icon Color', 'smart-referrals' ),
-                'type'      => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} #sr-copy-button img' => 'filter: none; fill: {{VALUE}};',
+                    '{{WRAPPER}} #sr-copy-button i, {{WRAPPER}} #sr-copy-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -179,6 +196,8 @@ class SR_Referral_URL_Widget extends Widget_Base {
     }
 
     protected function render() {
+        $settings = $this->get_settings_for_display();
+
         if ( is_user_logged_in() ) {
             $user_id = get_current_user_id();
             $referral_code = get_user_meta( $user_id, 'sr_referral_code', true );
@@ -188,7 +207,13 @@ class SR_Referral_URL_Widget extends Widget_Base {
             echo '<div class="sr-referral-copylink">';
             echo '<input type="text" id="sr-referral-link" value="' . esc_url( $url ) . '" readonly />';
             echo '<button id="sr-copy-button">';
-            echo '<img src="' . esc_url( 'https://unrealsolutions.com.br/wp-content/uploads/2024/11/copy.svg' ) . '" alt="Copy" />';
+
+            if ( ! empty( $settings['icon'] ) ) {
+                \Elementor\Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] );
+            } else {
+                echo '<img src="' . esc_url( SR_PLUGIN_URL . 'assets/images/copy-icon.svg' ) . '" alt="Copy" />';
+            }
+
             echo '</button>';
             echo '</div>';
         } else {

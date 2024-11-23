@@ -169,8 +169,8 @@ class SR_Referral_URL_Widget extends Widget_Base {
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
 
             echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<input type="text" id="sr-referral-link" value="' . esc_url( $url ) . '" readonly style="flex-grow: 1; height: 50px; width: 550px;">';
-            echo '<button id="sr-copy-button" style="display: flex; align-items: center; justify-content: center; height: 50px; width: 50px; background-color: #32373c; border: none; cursor: pointer;">';
+            echo '<input type="text" id="sr-referral-link" value="' . esc_url( $url ) . '" readonly>';
+            echo '<button id="sr-copy-button">';
 
             if ( ! empty( $settings['icon'] ) ) {
                 \Elementor\Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] );

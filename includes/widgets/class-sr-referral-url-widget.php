@@ -6,9 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Group_Control_Typography;
-use Elementor\Group_Control_Border;
-use Elementor\Group_Control_Box_Shadow;
 
 class SR_Referral_URL_Widget extends Widget_Base {
 
@@ -49,7 +46,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 500 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box;',
                 ],
             ]
         );
@@ -64,7 +61,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 20, 'max' => 100 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-referral-link' => 'height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} #sr-referral-link' => 'height: {{SIZE}}{{UNIT}}; line-height: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -118,6 +115,17 @@ class SR_Referral_URL_Widget extends Widget_Base {
         );
 
         $this->add_control(
+            'button_color',
+            [
+                'label'     => __( 'Button Color', 'smart-referrals' ),
+                'type'      => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} #sr-copy-button' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
             'button_icon_size',
             [
                 'label'      => __( 'Icon Size', 'smart-referrals' ),
@@ -138,7 +146,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'label'     => __( 'Icon Color', 'smart-referrals' ),
                 'type'      => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} #sr-copy-button img' => 'filter: invert(1); color: {{VALUE}};',
+                    '{{WRAPPER}} #sr-copy-button img' => 'filter: none; color: {{VALUE}};',
                 ],
             ]
         );

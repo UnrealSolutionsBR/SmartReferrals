@@ -146,7 +146,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'label'     => __( 'Icon Color', 'smart-referrals' ),
                 'type'      => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} #sr-copy-button img' => 'filter: none; color: {{VALUE}};',
+                    '{{WRAPPER}} #sr-copy-button img' => 'filter: none; fill: {{VALUE}};',
                 ],
             ]
         );

@@ -1,57 +1,58 @@
-.sr-referral-copylink {
-    display: flex;
-    align-items: center;
-}
-
-.sr-referral-copylink input#sr-referral-link {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-}
-
-.sr-referral-copylink button#sr-copy-button {
-    width: 50px;
-    height: 50px;
-    margin-left:20px;
-    background-color: #5991FF;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sr-referral-copylink button#sr-copy-button img {
-    width: 24px;
-    height: 24px;
-    filter: invert(1);
-}
-
-.sr-copylink-notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #32373c;
-    color: #fff;
-    padding: 15px 20px;
-    border-radius: 5px;
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    animation: sr-notification-fade 0.5s ease-in-out;
-}
-
-.sr-copylink-notification.show {
-    display: flex;
-}
-
-.sr-copylink-notification .sr-close-notification {
-    margin-left: 15px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-@keyframes sr-notification-fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+/*.sr-referral-copylink {
+/*    display: flex;
+/*    align-items: center;
+/*}
+/*
+/*.sr-referral-copylink input#sr-referral-link {
+/*    flex: 1;
+/*    padding: 10px;
+/*    font-size: 16px;
+/*}
+/*
+/*.sr-referral-copylink button#sr-copy-button {
+/*    width: 50px;
+/*    height: 50px;
+/*    margin-left:20px;
+/*    background-color: #5991FF;
+/*    border: none;
+/*    cursor: pointer;
+/*    display: flex;
+/*    align-items: center;
+/*    justify-content: center;
+/*}
+/*
+/*.sr-referral-copylink button#sr-copy-button img {
+/*    width: 24px;
+/*    height: 24px;
+/*    filter: invert(1);
+/*}
+/*
+/*.sr-copylink-notification {
+/*    position: fixed;
+/*    top: 20px;
+/*    right: 20px;
+/*    background-color: #32373c;
+/*    color: #fff;
+/*    padding: 15px 20px;
+/*    border-radius: 5px;
+/*    z-index: 9999;
+/*    display: none;
+/*    align-items: center;
+/*    animation: sr-notification-fade 0.5s ease-in-out;
+/*}
+/*
+/*.sr-copylink-notification.show {
+/*    display: flex;
+/*}
+/*
+/*.sr-copylink-notification .sr-close-notification {
+/*    margin-left: 15px;
+/*    cursor: pointer;
+/*    font-weight: bold;
+/*}
+/*
+/*@keyframes sr-notification-fade {
+/*    from { opacity: 0; }
+/*    to { opacity: 1; }
+/*}
+/*

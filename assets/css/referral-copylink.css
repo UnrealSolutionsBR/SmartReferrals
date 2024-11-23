@@ -12,6 +12,7 @@
 .sr-referral-copylink button#sr-copy-button {
     width: 50px;
     height: 50px;
+    margin-left:20px;
     background-color: #5991FF;
     border: none;
     cursor: pointer;

@@ -1,35 +1,35 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    exit; // Exit if accessed directly
 }
 
 class SR_Admin_Menu {
 
     public function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
+        add_filter( 'set-screen-option', [ $this, 'set_screen_option' ], 10, 3 );
     }
 
     public function add_admin_menu() {
-        // Add the main menu
+        // Agregar el menú principal y submenús
         add_menu_page(
             'Smart Referrals',
             'Smart Referrals',
             'manage_options',
             'sr-dashboard',
-            array( 'SR_Dashboard', 'display' ),
+            [ 'SR_Dashboard', 'display' ],
             'dashicons-megaphone',
             50
         );
 
-        // Add submenus
         add_submenu_page(
             'sr-dashboard',
             'Dashboard',
             'Dashboard',
             'manage_options',
             'sr-dashboard',
-            array( 'SR_Dashboard', 'display' )
+            [ 'SR_Dashboard', 'display' ]
         );
 
         add_submenu_page(
@@ -38,19 +38,35 @@ class SR_Admin_Menu {
             'General Settings',
             'manage_options',
             'sr-settings',
-            array( 'SR_Settings', 'display' )
+            [ 'SR_Settings', 'display' ]
         );
 
-        // Check if the referrals module is enabled
-        if ( get_option( 'sr_referrals_module_enabled', 'yes' ) === 'yes' ) {
-            add_submenu_page(
-                'sr-dashboard',
-                'Referrals',
-                'Referrals',
-                'manage_options',
-                'sr-referrals',
-                array( 'SR_Referrals', 'display' )
-            );
+        // Agregar la página "Referrals"
+        $hook = add_submenu_page(
+            'sr-dashboard',
+            __( 'Referrals', 'smart-referrals' ),
+            __( 'Referrals', 'smart-referrals' ),
+            'manage_options',
+            'sr-referrals',
+            function() {
+                include SR_PLUGIN_DIR . 'admin/templates/referrals.php';
+            }
+        );
+
+        // Configurar opciones de pantalla para "Referrals"
+        add_action( "load-$hook", function() {
+            add_screen_option( 'per_page', [
+                'label'   => __( 'Referrals per page', 'smart-referrals' ),
+                'default' => 20,
+                'option'  => 'referrals_per_page',
+            ] );
+        } );
+    }
+
+    public function set_screen_option( $status, $option, $value ) {
+        if ( 'referrals_per_page' === $option ) {
+            return $value;
         }
+        return $status;
     }
 }

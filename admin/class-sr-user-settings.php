@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 class SR_User_Settings {
 
     public static function display() {
+        // Validate user ID
         if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
             wp_die(__('Invalid user ID.', 'smart-referrals'));
         }
@@ -18,6 +19,7 @@ class SR_User_Settings {
             wp_die(__('User not found.', 'smart-referrals'));
         }
 
+        // Handle form submission
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('sr_user_settings')) {
             $is_active = isset($_POST['sr_user_active']) ? 'yes' : 'no';
             update_user_meta($user_id, 'sr_user_active', $is_active);
@@ -25,11 +27,12 @@ class SR_User_Settings {
             echo '<div class="updated"><p>' . __('Settings updated.', 'smart-referrals') . '</p></div>';
         }
 
+        // Get current active status
         $is_active = get_user_meta($user_id, 'sr_user_active', true) === 'yes';
 
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html($user->display_name); ?></h1>
+            <h1><?php echo esc_html(sprintf(__('Settings for %s', 'smart-referrals'), $user->display_name)); ?></h1>
             <form method="post">
                 <?php wp_nonce_field('sr_user_settings'); ?>
                 <table class="form-table">

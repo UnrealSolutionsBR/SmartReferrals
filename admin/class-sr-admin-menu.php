@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class SR_Admin_Menu {
+    require_once SR_PLUGIN_DIR . 'includes/class-sr-referrals-list-table.php';
 
     public function __construct() {
         add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );

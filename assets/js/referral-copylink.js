@@ -1,41 +1,32 @@
 jQuery(document).ready(function($) {
     $('#sr-copy-button').on('click', function(e) {
         e.preventDefault();
+        var copyText = $('#sr-referral-link').val();
 
-        // Seleccionar el contenido del textarea
-        var $textarea = $('.sr-referral-input');
-        $textarea.focus();
-        $textarea.select();
-
-        try {
-            // Intentar copiar al portapapeles
-            var successful = document.execCommand('copy');
-            if (successful) {
-                // Mostrar notificación
-                if ($('.sr-copylink-notification').length === 0) {
-                    $('body').append('<div class="sr-copylink-notification">' + srCopyLink.copiedText + '<span class="sr-close-notification">×</span></div>');
-                }
-                var notification = $('.sr-copylink-notification');
-
-                // Ajustar posición de la notificación
-                var headerHeight = $('header').outerHeight() || $('#wpadminbar').outerHeight() || 0;
-                notification.css('top', (headerHeight + 40) + 'px');
-                notification.addClass('show');
-
-                // Cerrar notificación al hacer clic
-                notification.find('.sr-close-notification').on('click', function() {
-                    notification.removeClass('show');
-                });
-
-                // Ocultar automáticamente después de 5 segundos
-                setTimeout(function() {
-                    notification.removeClass('show');
-                }, 5000);
-            } else {
-                console.error('Failed to copy text.');
+        // Copy the text to clipboard without selecting the input
+        navigator.clipboard.writeText(copyText).then(function() {
+            // Show notification
+            if ( $('.sr-copylink-notification').length === 0 ) {
+                $('body').append('<div class="sr-copylink-notification">' + srCopyLink.copiedText + '<span class="sr-close-notification">×</span></div>');
             }
-        } catch (err) {
-            console.error('Error copying text: ', err);
-        }
+            var notification = $('.sr-copylink-notification');
+
+            // Adjust position 20px below the header
+            var headerHeight = $('header').outerHeight() || $('#wpadminbar').outerHeight() || 0;
+            notification.css('top', (headerHeight + 40) + 'px');
+            notification.addClass('show');
+
+            // Close notification on click
+            notification.find('.sr-close-notification').on('click', function() {
+                notification.removeClass('show');
+            });
+
+            // Automatically hide after 5 seconds
+            setTimeout(function() {
+                notification.removeClass('show');
+            }, 5000);
+        }, function(err) {
+            console.error('Could not copy text: ', err);
+        });
     });
 });

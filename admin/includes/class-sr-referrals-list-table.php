@@ -40,6 +40,9 @@ class SR_Referrals_List_Table extends WP_List_Table {
             'offset' => ( $current_page - 1 ) * $per_page,
         ] );
 
+        var_dump($users); // Agrega esto temporalmente
+        die(); // Para detener la ejecución
+
         $data = [];
         foreach ( $users as $user ) {
             $data[] = [

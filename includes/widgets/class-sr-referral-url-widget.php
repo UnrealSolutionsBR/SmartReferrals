@@ -69,7 +69,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 800 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box; white-space: pre-wrap;',
+                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box;',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -85,10 +85,10 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'type'       => Controls_Manager::SLIDER,
                 'size_units' => [ 'px' ],
                 'range'      => [
-                    'px' => [ 'min' => 20, 'max' => 100 ],
+                    'px' => [ 'min' => 20, 'max' => 200 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} .sr-referral-input' => 'height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sr-referral-input' => 'height: {{SIZE}}{{UNIT}}; overflow: hidden; resize: none;',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -212,7 +212,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
 
             echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<input type="text" class="sr-referral-input" value="' . esc_url( $url ) . '" readonly>';
+            echo '<textarea class="sr-referral-input" readonly>' . esc_url( $url ) . '</textarea>';
             echo '<button class="sr-copy-button">';
 
             if ( ! empty( $settings['icon'] ) ) {

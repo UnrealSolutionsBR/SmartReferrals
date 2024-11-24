@@ -7,13 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SR_Shortcodes {
 
     public static function register_shortcodes() {
-        // Remove the old shortcode
-        // add_shortcode( 'sr_referral_url', array( __CLASS__, 'referral_url_shortcode' ) );
-
-        // Add the new shortcode
-        add_shortcode( 'sr_referral_copylink', array( __CLASS__, 'referral_copylink_shortcode' ) );
-
-        // Other shortcodes remain unchanged
         add_shortcode( 'sr_referralcode_in_session', array( __CLASS__, 'referralcode_in_session_shortcode' ) );
     }
 

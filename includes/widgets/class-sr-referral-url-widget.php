@@ -69,7 +69,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 800 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box;',
+                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box; white-space: pre-wrap;',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -120,7 +120,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'button_border_type',
             [
                 'label'     => __( 'Border Type', 'smart-referrals' ),
@@ -180,7 +180,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
             ]
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'button_icon_size',
             [
                 'label'      => __( 'Icon Size', 'smart-referrals' ),

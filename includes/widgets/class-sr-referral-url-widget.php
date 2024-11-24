@@ -44,11 +44,6 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'value'   => 'fas fa-copy',
                     'library' => 'fa-solid',
                 ],
-                'recommended' => [
-                    'fa-solid'  => [ 'copy', 'link', 'share' ],
-                    'fa-regular' => [],
-                    'fa-brands' => [],
-                ],
             ]
         );
 
@@ -74,7 +69,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 800 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-referral-link' => 'width: {{SIZE}}{{UNIT}} !important; box-sizing: border-box;',
+                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box;',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -93,7 +88,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 20, 'max' => 100 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-referral-link' => 'height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sr-referral-input' => 'height: {{SIZE}}{{UNIT}};',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -119,9 +114,57 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'label'     => __( 'Button Background Color', 'smart-referrals' ),
                 'type'      => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} #sr-copy-button' => 'background-color: {{VALUE}};',
+                    '{{WRAPPER}} .sr-copy-button' => 'background-color: {{VALUE}};',
                 ],
                 'default' => '#32373c',
+            ]
+        );
+
+        $this->add_control(
+            'button_border_type',
+            [
+                'label'     => __( 'Border Type', 'smart-referrals' ),
+                'type'      => Controls_Manager::SELECT,
+                'options'   => [
+                    'none'   => __( 'None', 'smart-referrals' ),
+                    'solid'  => __( 'Solid', 'smart-referrals' ),
+                    'dotted' => __( 'Dotted', 'smart-referrals' ),
+                    'dashed' => __( 'Dashed', 'smart-referrals' ),
+                    'double' => __( 'Double', 'smart-referrals' ),
+                ],
+                'default'   => 'none',
+                'selectors' => [
+                    '{{WRAPPER}} .sr-copy-button' => 'border-style: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'button_border_width',
+            [
+                'label'      => __( 'Border Width', 'smart-referrals' ),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => [ 'px' ],
+                'selectors'  => [
+                    '{{WRAPPER}} .sr-copy-button' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+                'condition'  => [
+                    'button_border_type!' => 'none',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'button_border_color',
+            [
+                'label'     => __( 'Border Color', 'smart-referrals' ),
+                'type'      => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .sr-copy-button' => 'border-color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'button_border_type!' => 'none',
+                ],
             ]
         );
 
@@ -131,7 +174,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                 'label'     => __( 'Icon Color', 'smart-referrals' ),
                 'type'      => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} #sr-copy-button i, {{WRAPPER}} #sr-copy-button svg' => 'fill: {{VALUE}};',
+                    '{{WRAPPER}} .sr-copy-button i, {{WRAPPER}} .sr-copy-button svg' => 'fill: {{VALUE}};',
                 ],
                 'default' => '#fff',
             ]
@@ -147,7 +190,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 10, 'max' => 100 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} #sr-copy-button i, {{WRAPPER}} #sr-copy-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .sr-copy-button i, {{WRAPPER}} .sr-copy-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
                 ],
                 'default' => [
                     'unit' => 'px',
@@ -169,8 +212,8 @@ class SR_Referral_URL_Widget extends Widget_Base {
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
 
             echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<input type="text" id="sr-referral-link" value="' . esc_url( $url ) . '" readonly>';
-            echo '<button id="sr-copy-button">';
+            echo '<input type="text" class="sr-referral-input" value="' . esc_url( $url ) . '" readonly>';
+            echo '<button class="sr-copy-button">';
 
             if ( ! empty( $settings['icon'] ) ) {
                 \Elementor\Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] );

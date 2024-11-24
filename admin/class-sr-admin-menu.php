@@ -41,6 +41,14 @@ class SR_Admin_Menu {
             'sr-settings',
             [ 'SR_Settings', 'display' ]
         );
+        add_submenu_page(
+            null, // No se mostrará en el menú directamente
+            __('User Settings', 'smart-referrals'),
+            __('User Settings', 'smart-referrals'),
+            'manage_options',
+            'sr-user-settings',
+            ['SR_User_Settings', 'display']
+        );
 
         // Agregar la página "Referrals"
         $hook = add_submenu_page(

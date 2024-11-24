@@ -204,25 +204,25 @@ class SR_Referral_URL_Widget extends Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-
+    
         if ( is_user_logged_in() ) {
             $user_id = get_current_user_id();
             $referral_code = get_user_meta( $user_id, 'sr_referral_code', true );
             $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
-
+    
             echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<input type="text" class="sr-referral-input" value="' . esc_url( $url ) . '" readonly>';
-            echo '<button class="sr-copy-button">';
-
+            echo '<textarea id="sr-referral-link" class="sr-referral-input" readonly>' . esc_url( $url ) . '</textarea>';
+            echo '<button id="sr-copy-button" class="sr-copy-button">';
+    
             if ( ! empty( $settings['icon'] ) ) {
                 \Elementor\Icons_Manager::render_icon( $settings['icon'], [ 'aria-hidden' => 'true' ] );
             }
-
+    
             echo '</button>';
             echo '</div>';
         } else {
             echo '<p>' . __( 'Please log in to see your referral URL.', 'smart-referrals' ) . '</p>';
         }
-    }
+    }    
 }

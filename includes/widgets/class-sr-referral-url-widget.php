@@ -212,7 +212,7 @@ class SR_Referral_URL_Widget extends Widget_Base {
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
     
             echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<textarea id="sr-referral-link" class="sr-referral-input" readonly>' . esc_url( $url ) . '</textarea>';
+            echo '<span id="sr-referral-link" class="sr-referral-input">' . esc_url( $url ) . '</span>';
             echo '<button id="sr-copy-button" class="sr-copy-button">';
     
             if ( ! empty( $settings['icon'] ) ) {
@@ -224,5 +224,6 @@ class SR_Referral_URL_Widget extends Widget_Base {
         } else {
             echo '<p>' . __( 'Please log in to see your referral URL.', 'smart-referrals' ) . '</p>';
         }
-    }    
+    }
+       
 }

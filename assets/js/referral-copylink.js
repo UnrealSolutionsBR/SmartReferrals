@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     $('#sr-copy-button').on('click', function(e) {
         e.preventDefault();
-        var copyText = $('#sr-referral-link').val(); // Seleccionar el contenido del textarea
+        var copyText = $('#sr-referral-link').text(); // Obtener texto del span
 
         // Copiar el texto al portapapeles
         navigator.clipboard.writeText(copyText).then(function() {

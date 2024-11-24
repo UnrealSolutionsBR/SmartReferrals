@@ -1,3 +1,16 @@
+.sr-referral-input {
+    display: inline-block;
+    width: 100%; /* Ajustable desde Elementor */
+    padding: 10px; /* Opcional */
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    word-wrap: break-word; /* Permitir que el texto se ajuste */
+    white-space: normal; /* Hacer wrap del texto */
+    overflow-wrap: break-word; /* Ajustar largas URLs */
+    box-sizing: border-box;
+}
 .sr-copylink-notification {
     position: fixed;
     top: 20px;

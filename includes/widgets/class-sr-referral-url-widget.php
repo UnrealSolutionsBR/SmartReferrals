@@ -69,11 +69,11 @@ class SR_Referral_URL_Widget extends Widget_Base {
                     'px' => [ 'min' => 50, 'max' => 800 ],
                 ],
                 'selectors'  => [
-                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; box-sizing: border-box; white-space: pre-wrap;',
+                    '{{WRAPPER}} .sr-referral-input' => 'width: {{SIZE}}{{UNIT}}; max-width: 100%; box-sizing: border-box; white-space: pre-wrap; overflow-wrap: break-word;',
                 ],
                 'default' => [
-                    'unit' => 'px',
-                    'size' => 550,
+                    'unit' => '%',
+                    'size' => 100,
                 ],
             ]
         );
@@ -121,80 +121,27 @@ class SR_Referral_URL_Widget extends Widget_Base {
         );
 
         $this->add_responsive_control(
-            'button_border_type',
+            'button_alignment',
             [
-                'label'     => __( 'Border Type', 'smart-referrals' ),
-                'type'      => Controls_Manager::SELECT,
-                'options'   => [
-                    'none'   => __( 'None', 'smart-referrals' ),
-                    'solid'  => __( 'Solid', 'smart-referrals' ),
-                    'dotted' => __( 'Dotted', 'smart-referrals' ),
-                    'dashed' => __( 'Dashed', 'smart-referrals' ),
-                    'double' => __( 'Double', 'smart-referrals' ),
+                'label'   => __( 'Button Alignment', 'smart-referrals' ),
+                'type'    => Controls_Manager::CHOOSE,
+                'options' => [
+                    'flex-start' => [
+                        'title' => __( 'Left', 'smart-referrals' ),
+                        'icon'  => 'eicon-text-align-left',
+                    ],
+                    'center' => [
+                        'title' => __( 'Center', 'smart-referrals' ),
+                        'icon'  => 'eicon-text-align-center',
+                    ],
+                    'flex-end' => [
+                        'title' => __( 'Right', 'smart-referrals' ),
+                        'icon'  => 'eicon-text-align-right',
+                    ],
                 ],
-                'default'   => 'none',
+                'default' => 'flex-start',
                 'selectors' => [
-                    '{{WRAPPER}} .sr-copy-button' => 'border-style: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $this->add_responsive_control(
-            'button_border_width',
-            [
-                'label'      => __( 'Border Width', 'smart-referrals' ),
-                'type'       => Controls_Manager::DIMENSIONS,
-                'size_units' => [ 'px' ],
-                'selectors'  => [
-                    '{{WRAPPER}} .sr-copy-button' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                ],
-                'condition'  => [
-                    'button_border_type!' => 'none',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'button_border_color',
-            [
-                'label'     => __( 'Border Color', 'smart-referrals' ),
-                'type'      => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .sr-copy-button' => 'border-color: {{VALUE}};',
-                ],
-                'condition' => [
-                    'button_border_type!' => 'none',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'button_icon_color',
-            [
-                'label'     => __( 'Icon Color', 'smart-referrals' ),
-                'type'      => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .sr-copy-button i, {{WRAPPER}} .sr-copy-button svg' => 'fill: {{VALUE}};',
-                ],
-                'default' => '#fff',
-            ]
-        );
-
-        $this->add_responsive_control(
-            'button_icon_size',
-            [
-                'label'      => __( 'Icon Size', 'smart-referrals' ),
-                'type'       => Controls_Manager::SLIDER,
-                'size_units' => [ 'px' ],
-                'range'      => [
-                    'px' => [ 'min' => 10, 'max' => 100 ],
-                ],
-                'selectors'  => [
-                    '{{WRAPPER}} .sr-copy-button i, {{WRAPPER}} .sr-copy-button svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
-                ],
-                'default' => [
-                    'unit' => 'px',
-                    'size' => 25,
+                    '{{WRAPPER}} .sr-referral-copylink' => 'justify-content: {{VALUE}};',
                 ],
             ]
         );
@@ -211,8 +158,8 @@ class SR_Referral_URL_Widget extends Widget_Base {
             $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
             $url = add_query_arg( $parameter, $referral_code, home_url( '/' ) );
     
-            echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px;">';
-            echo '<span id="sr-referral-link" class="sr-referral-input">' . esc_url( $url ) . '</span>';
+            echo '<div class="sr-referral-copylink" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; max-width: 100%;">';
+            echo '<span id="sr-referral-link" class="sr-referral-input" style="overflow-wrap: break-word;">' . esc_url( $url ) . '</span>';
             echo '<button id="sr-copy-button" class="sr-copy-button">';
     
             if ( ! empty( $settings['icon'] ) ) {
@@ -225,5 +172,4 @@ class SR_Referral_URL_Widget extends Widget_Base {
             echo '<p>' . __( 'Please log in to see your referral URL.', 'smart-referrals' ) . '</p>';
         }
     }
-       
 }

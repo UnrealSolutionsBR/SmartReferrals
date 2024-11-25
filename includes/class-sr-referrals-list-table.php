@@ -24,6 +24,7 @@ class SR_Referrals_List_Table extends WP_List_Table {
             'username' => __( 'User', 'smart-referrals' ),
             'email'    => __( 'Email', 'smart-referrals' ),
             'referral' => __( 'Referral Code', 'smart-referrals' ),
+            'status'   => __( 'Status', 'smart-referrals' ),
             'actions'  => __( 'Actions', 'smart-referrals' ),
         ];
         return $columns;
@@ -57,6 +58,18 @@ class SR_Referrals_List_Table extends WP_List_Table {
         return esc_html( $item['referral_code'] );
     }
 
+    public function column_status( $item ) {
+        $status = get_user_meta( $item['ID'], 'sr_active_status', true );
+    
+        // Si el valor no está definido, se asume activo por defecto.
+        if ( empty( $status ) ) {
+            $status = 'active';
+            update_user_meta( $item['ID'], 'sr_active_status', $status );
+        }
+    
+        return $status === 'active' ? __( 'Active', 'smart-referrals' ) : __( 'Inactive', 'smart-referrals' );
+    }
+
     public function column_actions( $item ) {
         $settings_url = add_query_arg(
             [
@@ -75,12 +88,37 @@ class SR_Referrals_List_Table extends WP_List_Table {
 
     public function get_bulk_actions() {
         $actions = [
-            'delete' => __( 'Delete', 'smart-referrals' ),
+            'activate'   => __( 'Activate', 'smart-referrals' ),
+            'deactivate' => __( 'Deactivate', 'smart-referrals' ),
         ];
         return $actions;
     }
 
+    public function process_bulk_action() {
+        $action = $this->current_action();
+
+        if ( $action && in_array( $action, [ 'activate', 'deactivate' ] ) ) {
+            // Check nonce
+            if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
+                wp_die( __( 'No tienes permisos para realizar esta acción.', 'smart-referrals' ) );
+            }
+
+            $user_ids = isset( $_REQUEST['referrals'] ) ? array_map( 'intval', $_REQUEST['referrals'] ) : [];
+            $status   = $action === 'activate' ? 'active' : 'inactive';
+
+            foreach ( $user_ids as $user_id ) {
+                update_user_meta( $user_id, 'sr_active_status', $status );
+            }
+
+            // Redirect to the referrals page
+            wp_redirect( add_query_arg( 'message', $action, admin_url( 'admin.php?page=sr-referrals' ) ) );
+            exit;
+        }
+    }
+
     public function prepare_items() {
+        $this->process_bulk_action();
+
         $per_page     = 10;
         $current_page = $this->get_pagenum();
 

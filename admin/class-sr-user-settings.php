@@ -1,52 +1,50 @@
 <?php
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
 class SR_User_Settings {
 
     public static function display() {
-        // Validate user ID
-        if (!isset($_GET['user_id']) || empty($_GET['user_id'])) {
-            wp_die(__('Invalid user ID.', 'smart-referrals'));
+        if ( ! isset( $_GET['user_id'] ) || ! current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have permission to access this page.', 'smart-referrals' ) );
         }
 
-        $user_id = intval($_GET['user_id']);
-        $user = get_userdata($user_id);
+        $user_id = intval( $_GET['user_id'] );
+        $status = get_user_meta( $user_id, 'sr_active_status', true );
 
-        if (!$user) {
-            wp_die(__('User not found.', 'smart-referrals'));
+        // Si el estado no está definido, lo configuramos como activo.
+        if ( empty( $status ) ) {
+            $status = 'active';
+            update_user_meta( $user_id, 'sr_active_status', $status );
         }
 
-        // Handle form submission
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('sr_user_settings')) {
-            $is_active = isset($_POST['sr_user_active']) ? 'yes' : 'no';
-            update_user_meta($user_id, 'sr_user_active', $is_active);
+        if ( isset( $_POST['submit'] ) && check_admin_referer( 'sr_user_settings_action', 'sr_user_settings_nonce' ) ) {
+            $new_status = isset( $_POST['sr_active_status'] ) && $_POST['sr_active_status'] === 'on' ? 'active' : 'inactive';
+            update_user_meta( $user_id, 'sr_active_status', $new_status );
 
-            echo '<div class="updated"><p>' . __('Settings updated.', 'smart-referrals') . '</p></div>';
+            echo '<div class="updated"><p>' . __( 'Settings updated successfully.', 'smart-referrals' ) . '</p></div>';
         }
-
-        // Get current active status
-        $is_active = get_user_meta($user_id, 'sr_user_active', true) === 'yes';
 
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html(sprintf(__('Settings for %s', 'smart-referrals'), $user->display_name)); ?></h1>
+            <h1><?php esc_html_e( 'User Settings', 'smart-referrals' ); ?></h1>
+
             <form method="post">
-                <?php wp_nonce_field('sr_user_settings'); ?>
+                <?php wp_nonce_field( 'sr_user_settings_action', 'sr_user_settings_nonce' ); ?>
+
                 <table class="form-table">
                     <tr>
-                        <th><?php esc_html_e('Active Status', 'smart-referrals'); ?></th>
+                        <th scope="row"><?php esc_html_e( 'Active Status', 'smart-referrals' ); ?></th>
                         <td>
-                            <label>
-                                <input type="checkbox" name="sr_user_active" <?php checked($is_active); ?> />
-                                <?php esc_html_e('Activate this user', 'smart-referrals'); ?>
-                            </label>
+                            <input type="checkbox" name="sr_active_status" <?php checked( $status, 'active' ); ?> />
+                            <label for="sr_active_status"><?php esc_html_e( 'Enable user', 'smart-referrals' ); ?></label>
                         </td>
                     </tr>
                 </table>
-                <?php submit_button(__('Save Changes', 'smart-referrals')); ?>
+
+                <?php submit_button(); ?>
             </form>
         </div>
         <?php

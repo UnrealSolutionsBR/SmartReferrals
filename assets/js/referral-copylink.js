@@ -11,9 +11,16 @@ jQuery(document).ready(function($) {
             }
             var notification = $('.sr-copylink-notification');
 
-            // Ajustar posición 20px debajo del header
-            var headerHeight = $('header').outerHeight() || $('#wpadminbar').outerHeight() || 0;
-            notification.css('top', (headerHeight + 40) + 'px');
+            // Ajustar posición según el dispositivo
+            if ($(window).width() <= 768) {
+                // Para móviles, 10px desde la parte superior
+                notification.css('top', '10px');
+            } else {
+                // Para desktop, 20px debajo del header o admin bar
+                var headerHeight = $('header').outerHeight() || $('#wpadminbar').outerHeight() || 0;
+                notification.css('top', (headerHeight + 40) + 'px');
+            }
+
             notification.addClass('show');
 
             // Cerrar notificación al hacer clic

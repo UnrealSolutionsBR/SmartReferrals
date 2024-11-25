@@ -1,50 +1,61 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
 class SR_User_Settings {
 
     public static function display() {
-        if ( ! isset( $_GET['user_id'] ) || ! current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'You do not have permission to access this page.', 'smart-referrals' ) );
+        if (!isset($_GET['user_id']) || !current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'smart-referrals'));
         }
 
-        $user_id = intval( $_GET['user_id'] );
-        $status = get_user_meta( $user_id, 'sr_active_status', true );
+        $user_id = intval($_GET['user_id']);
+        $user = get_user_by('id', $user_id);
 
-        // Si el estado no está definido, lo configuramos como activo.
-        if ( empty( $status ) ) {
-            $status = 'active';
-            update_user_meta( $user_id, 'sr_active_status', $status );
+        if (!$user) {
+            wp_die(__('User not found.', 'smart-referrals'));
         }
 
-        if ( isset( $_POST['submit'] ) && check_admin_referer( 'sr_user_settings_action', 'sr_user_settings_nonce' ) ) {
-            $new_status = isset( $_POST['sr_active_status'] ) && $_POST['sr_active_status'] === 'on' ? 'active' : 'inactive';
-            update_user_meta( $user_id, 'sr_active_status', $new_status );
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('sr_user_settings_save', 'sr_user_settings_nonce')) {
+            $active_status = isset($_POST['active_status']) ? 'yes' : 'no';
+            $paypal_email = sanitize_email($_POST['paypal_email'] ?? '');
 
-            echo '<div class="updated"><p>' . __( 'Settings updated successfully.', 'smart-referrals' ) . '</p></div>';
+            update_user_meta($user_id, 'sr_active_status', $active_status);
+            update_user_meta($user_id, 'sr_paypal_email', $paypal_email);
+
+            echo '<div class="updated"><p>' . __('Settings saved.', 'smart-referrals') . '</p></div>';
         }
 
+        // Get existing meta values
+        $active_status = get_user_meta($user_id, 'sr_active_status', true) === 'yes';
+        $paypal_email = get_user_meta($user_id, 'sr_paypal_email', true);
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'User Settings', 'smart-referrals' ); ?></h1>
-
+            <h1><?php echo sprintf(__('User Settings: %s', 'smart-referrals'), esc_html($user->display_name)); ?></h1>
             <form method="post">
-                <?php wp_nonce_field( 'sr_user_settings_action', 'sr_user_settings_nonce' ); ?>
-
+                <?php wp_nonce_field('sr_user_settings_save', 'sr_user_settings_nonce'); ?>
                 <table class="form-table">
                     <tr>
-                        <th scope="row"><?php esc_html_e( 'Active Status', 'smart-referrals' ); ?></th>
+                        <th><label for="active_status"><?php _e('Active Status', 'smart-referrals'); ?></label></th>
                         <td>
-                            <input type="checkbox" name="sr_active_status" <?php checked( $status, 'active' ); ?> />
-                            <label for="sr_active_status"><?php esc_html_e( 'Enable user', 'smart-referrals' ); ?></label>
+                            <input type="checkbox" name="active_status" id="active_status" <?php checked($active_status); ?> />
+                            <p class="description"><?php _e('Enable or disable this user.', 'smart-referrals'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="paypal_email"><?php _e('Paypal Payout Email', 'smart-referrals'); ?></label></th>
+                        <td>
+                            <input type="email" name="paypal_email" id="paypal_email" value="<?php echo esc_attr($paypal_email); ?>" class="regular-text" />
+                            <p class="description"><?php _e('Enter the user\'s Paypal email for payouts.', 'smart-referrals'); ?></p>
                         </td>
                     </tr>
                 </table>
-
-                <?php submit_button(); ?>
+                <p class="submit">
+                    <button type="submit" class="button button-primary"><?php _e('Save Changes', 'smart-referrals'); ?></button>
+                </p>
             </form>
         </div>
         <?php

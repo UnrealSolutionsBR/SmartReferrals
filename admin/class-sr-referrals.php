@@ -1,31 +1,32 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
 }
 
 class SR_Referrals {
 
     public static function display() {
-        include SR_PLUGIN_DIR . 'admin/templates/referrals.php';
-    }
+        // Render the referrals list table
+        require_once SR_PLUGIN_DIR . 'includes/class-sr-referrals-list-table.php';
 
-    public static function activate_module() {
-        // Activate module functions
-        // For example:
-        add_action( 'woocommerce_before_cart', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
-        // Add other actions or filters as needed
-    }
+        $referrals_table = new SR_Referrals_List_Table();
+        $referrals_table->prepare_items();
+        ?>
+        <div class="wrap">
+            <h1 class="wp-heading-inline"><?php esc_html_e('Referrals', 'smart-referrals'); ?></h1>
 
-    public static function deactivate_module() {
-        // Deactivate module functions
-        // For example:
-        remove_action( 'woocommerce_before_cart', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
-        // Remove other actions or filters as needed
-    }
-}
+            <!-- Search form -->
+            <form method="get">
+                <input type="hidden" name="page" value="sr-referrals" />
+                <?php $referrals_table->search_box(__('Search Referrals', 'smart-referrals'), 'search_id'); ?>
+            </form>
 
-// On plugin load, check module status and activate functions if needed
-if ( get_option( 'sr_referrals_module_enabled', 'yes' ) === 'yes' ) {
-    SR_Referrals::activate_module();
+            <!-- Referrals table -->
+            <form method="post">
+                <?php $referrals_table->display(); ?>
+            </form>
+        </div>
+        <?php
+    }
 }

@@ -27,6 +27,7 @@ require_once SR_PLUGIN_DIR . 'includes/class-sr-woocommerce-integration.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-shortcodes.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-ajax-handler.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-elementor-widgets.php';
+require_once SR_PLUGIN_DIR . 'admin/class-sr-user-settings.php';
 
 class Smart_Referrals {
 

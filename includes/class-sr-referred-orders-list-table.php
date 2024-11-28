@@ -52,7 +52,8 @@ class SR_Referred_Orders_List_Table extends WP_List_Table {
 
             if ($referral_coupon) {
                 $customer_id = $order->get_customer_id();
-                $customer = new WP_User($customer_id);
+                $customer = $customer_id ? get_user_by('ID', $customer_id) : null;
+                $customer_name = $customer ? $customer->display_name : __('Guest', 'smart-referrals');
                 $referral_user = $this->get_referral_user($referral_coupon);
 
                 // Obtener el estado personalizado
@@ -65,9 +66,9 @@ class SR_Referred_Orders_List_Table extends WP_List_Table {
                     'ID'         => $order->get_id(),
                     'order'      => sprintf(
                         '<a href="%s">#%d %s</a>',
-                        esc_url(admin_url('post.php?post=' . $order->get_id() . '&action=edit')),
+                        esc_url(admin_url('admin.php?page=sr-referred-order&order_id=' . $order->get_id())),
                         $order->get_id(),
-                        esc_html($customer->display_name)
+                        esc_html($customer_name)
                     ),
                     'date'       => $order->get_date_created()->date('Y-m-d H:i:s'),
                     'status'     => $status,

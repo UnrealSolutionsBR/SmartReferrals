@@ -11,7 +11,7 @@ class SR_Admin_Menu {
     }
 
     public function add_admin_menu() {
-        // Add the main menu
+        // Agregar el menú principal
         add_menu_page(
             'Smart Referrals',
             'Smart Referrals',
@@ -22,7 +22,7 @@ class SR_Admin_Menu {
             50
         );
 
-        // Add submenus
+        // Agregar submenús
         add_submenu_page(
             'sr-dashboard',
             'Dashboard',
@@ -40,13 +40,33 @@ class SR_Admin_Menu {
             'sr-referrals',
             ['SR_Referrals', 'display']
         );
+
         add_submenu_page(
-    null, // No se mostrará en el menú directamente
-    __('User Settings', 'smart-referrals'),
-    __('User Settings', 'smart-referrals'),
-    'manage_options',
-    'sr-user-settings',
-    ['SR_User_Settings', 'display']
-);
+            'sr-dashboard',
+            'Referred Orders',
+            'Referred Orders',
+            'manage_options',
+            'sr-referred-orders',
+            ['SR_Referred_Orders', 'display']
+        );
+
+        // Registrar la página individual de pedido referido (no aparece en el menú)
+        add_submenu_page(
+            null, // No se mostrará en el menú
+            'Referred Order',
+            'Referred Order',
+            'manage_options',
+            'sr-referred-order',
+            ['SR_Referred_Order_Edit', 'display']
+        );
+
+        add_submenu_page(
+            null, // No se mostrará en el menú directamente
+            __('User Settings', 'smart-referrals'),
+            __('User Settings', 'smart-referrals'),
+            'manage_options',
+            'sr-user-settings',
+            ['SR_User_Settings', 'display']
+        );
     }
 }

@@ -29,6 +29,8 @@ require_once SR_PLUGIN_DIR . 'includes/class-sr-ajax-handler.php';
 require_once SR_PLUGIN_DIR . 'includes/class-sr-elementor-widgets.php';
 require_once SR_PLUGIN_DIR . 'admin/class-sr-user-settings.php';
 require_once SR_PLUGIN_DIR . 'includes/jetengine/class-sr-dynamic-conditions.php';
+require_once SR_PLUGIN_DIR . 'admin/class-sr-referred-orders.php';
+require_once SR_PLUGIN_DIR . 'includes/class-sr-referred-orders-list-table.php';
 
 class Smart_Referrals {
 

@@ -41,4 +41,28 @@ jQuery(document).ready(function($) {
             }
         });
     });
+    $('.sr-referral-status').on('change', function() {
+        var $select = $(this);
+        var orderId = $select.data('order-id');
+        var status  = $select.val();
+        var nonce   = $select.data('nonce');
+
+        $.ajax({
+            url: srAdminAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'sr_update_referral_status',
+                order_id: orderId,
+                status: status,
+                nonce: nonce,
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert(response.data.message);
+                } else {
+                    alert(response.data.message);
+                }
+            }
+        });
+    });
 });

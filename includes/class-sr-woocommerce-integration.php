@@ -61,23 +61,35 @@ class SR_WooCommerce_Integration {
     public static function validate_referral_coupon_for_user( $valid, $coupon, $user ) {
         $user_id = $user->ID;
 
-        // Check if the coupon being applied is a referral code coupon
+        // Verificar si el cupón es un código de referido
         $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
 
         if ( $is_referral_coupon === 'yes' ) {
-            // Check if the user has already used a referral coupon
-            $has_used_referral_coupon = get_user_meta( $user_id, '_sr_used_referral_coupon', true );
+            // Verificar si el usuario ya ha usado algún código de referido
+            $used_referral_coupons = get_user_meta( $user_id, '_sr_used_referral_coupons', true );
 
-            if ( $has_used_referral_coupon === 'yes' ) {
-                // The user has already used a referral code coupon
-                wc_add_notice( __( 'You have already used a referral code coupon and cannot use another one.', 'smart-referrals' ), 'error' );
+            if ( $used_referral_coupons === 'yes' ) {
+                // El usuario ya ha usado un código de referido
+                // En lugar de usar wc_add_notice, usamos el sistema de notificación personalizado
+
+                // Guardar el mensaje de error en una variable de sesión
+                if ( ! session_id() ) {
+                    session_start();
+                }
+                $_SESSION['sr_referral_code_error'] = __( 'Ya has utilizado un código de referido anteriormente y no puedes usar otro.', 'smart-referrals' );
+
+                // Remover el cupón del carrito si está aplicado
+                if ( WC()->cart->has_discount( $coupon->get_code() ) ) {
+                    WC()->cart->remove_coupon( $coupon->get_code() );
+                }
+
+                // Devolver false para indicar que el cupón no es válido
                 return false;
             }
         }
 
         return $valid;
     }
-
 }
 
 // Hooks
@@ -88,6 +100,7 @@ add_filter( 'woocommerce_coupon_is_valid_for_user', array( 'SR_WooCommerce_Integ
 
 // Hook to order completion to mark user as having used a referral coupon
 add_action( 'woocommerce_payment_complete', 'sr_mark_user_used_referral_coupon' );
+add_action( 'woocommerce_order_status_completed', 'sr_mark_user_used_referral_coupon' );
 
 function sr_mark_user_used_referral_coupon( $order_id ) {
     $order = wc_get_order( $order_id );
@@ -101,9 +114,36 @@ function sr_mark_user_used_referral_coupon( $order_id ) {
             $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
 
             if ( $is_referral_coupon === 'yes' ) {
-                update_user_meta( $user_id, '_sr_used_referral_coupon', 'yes' );
-                break; // No need to check further coupons
+                // Marcar que el usuario ha usado un código de referido
+                update_user_meta( $user_id, '_sr_used_referral_coupons', 'yes' );
+                break; // No es necesario verificar más cupones
             }
         }
+    }
+}
+
+// Encolar el script para mostrar la notificación en el frontend
+add_action( 'wp_enqueue_scripts', 'sr_enqueue_referral_error_script' );
+
+function sr_enqueue_referral_error_script() {
+    // Solo en páginas de carrito y checkout
+    if ( is_cart() || is_checkout() ) {
+        wp_enqueue_script( 'sr-referral-error-script', SR_PLUGIN_URL . 'assets/js/referral-error.js', array( 'jquery' ), '1.0', true );
+
+        $error_message = '';
+        if ( ! session_id() ) {
+            session_start();
+        }
+        if ( isset( $_SESSION['sr_referral_code_error'] ) ) {
+            $error_message = $_SESSION['sr_referral_code_error'];
+            unset( $_SESSION['sr_referral_code_error'] );
+        }
+
+        wp_localize_script( 'sr-referral-error-script', 'srReferralError', array(
+            'errorMessage' => $error_message,
+        ) );
+
+        // Encolar estilos si es necesario
+        wp_enqueue_style( 'sr-referral-error-styles', SR_PLUGIN_URL . 'assets/css/referral-error.css', array(), '1.0' );
     }
 }

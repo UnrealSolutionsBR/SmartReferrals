@@ -6,6 +6,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class SR_WooCommerce_Integration {
 
+    public static function init() {
+        // Hooks
+        add_action( 'template_redirect', array( __CLASS__, 'apply_referral_coupon' ) );
+        add_action( 'woocommerce_before_cart', array( __CLASS__, 'add_referral_coupon_to_cart' ) );
+        add_action( 'woocommerce_before_checkout_form', array( __CLASS__, 'add_referral_coupon_to_cart' ) );
+        add_filter( 'woocommerce_coupon_is_valid_for_user', array( __CLASS__, 'validate_referral_coupon_for_user' ), 10, 3 );
+
+        // Encolar el script para mostrar la notificación en el frontend
+        add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_referral_error_script' ) );
+    }
+
     public static function apply_referral_coupon() {
         $parameter = get_option( 'sr_referral_parameter', 'REFERRALCODE' );
         if ( isset( $_GET[ $parameter ] ) ) {
@@ -59,19 +70,17 @@ class SR_WooCommerce_Integration {
     }
 
     public static function validate_referral_coupon_for_user( $valid, $coupon, $user ) {
-        $user_id = $user->ID;
+        $user_id = get_current_user_id();
 
-        // Verificar si el cupón es un código de referido
+        // Verificar si el cupón es un código de referido usando el metadato '_sr_referral_coupon'
         $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
 
         if ( $is_referral_coupon === 'yes' ) {
-            // Verificar si el usuario ya ha usado algún código de referido
-            $used_referral_coupons = get_user_meta( $user_id, '_sr_used_referral_coupons', true );
+            // Verificar si el usuario ya ha usado algún código de referido en pedidos anteriores
+            $has_used_referral_coupon = self::has_used_referral_coupon_before( $user_id );
 
-            if ( $used_referral_coupons === 'yes' ) {
+            if ( $has_used_referral_coupon ) {
                 // El usuario ya ha usado un código de referido
-                // En lugar de usar wc_add_notice, usamos el sistema de notificación personalizado
-
                 // Guardar el mensaje de error en una variable de sesión
                 if ( ! session_id() ) {
                     session_start();
@@ -90,60 +99,61 @@ class SR_WooCommerce_Integration {
 
         return $valid;
     }
-}
 
-// Hooks
-add_action( 'template_redirect', array( 'SR_WooCommerce_Integration', 'apply_referral_coupon' ) );
-add_action( 'woocommerce_before_cart', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
-add_action( 'woocommerce_before_checkout_form', array( 'SR_WooCommerce_Integration', 'add_referral_coupon_to_cart' ) );
-add_filter( 'woocommerce_coupon_is_valid_for_user', array( 'SR_WooCommerce_Integration', 'validate_referral_coupon_for_user' ), 10, 3 );
-
-// Hook to order completion to mark user as having used a referral coupon
-add_action( 'woocommerce_payment_complete', 'sr_mark_user_used_referral_coupon' );
-add_action( 'woocommerce_order_status_completed', 'sr_mark_user_used_referral_coupon' );
-
-function sr_mark_user_used_referral_coupon( $order_id ) {
-    $order = wc_get_order( $order_id );
-    $user_id = $order->get_user_id();
-
-    if ( $user_id ) {
-        $used_coupons = $order->get_coupon_codes();
-
-        foreach ( $used_coupons as $coupon_code ) {
-            $coupon = new WC_Coupon( $coupon_code );
-            $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
-
-            if ( $is_referral_coupon === 'yes' ) {
-                // Marcar que el usuario ha usado un código de referido
-                update_user_meta( $user_id, '_sr_used_referral_coupons', 'yes' );
-                break; // No es necesario verificar más cupones
-            }
-        }
-    }
-}
-
-// Encolar el script para mostrar la notificación en el frontend
-add_action( 'wp_enqueue_scripts', 'sr_enqueue_referral_error_script' );
-
-function sr_enqueue_referral_error_script() {
-    // Solo en páginas de carrito y checkout
-    if ( is_cart() || is_checkout() ) {
-        wp_enqueue_script( 'sr-referral-error-script', SR_PLUGIN_URL . 'assets/js/referral-error.js', array( 'jquery' ), '1.0', true );
-
-        $error_message = '';
-        if ( ! session_id() ) {
-            session_start();
-        }
-        if ( isset( $_SESSION['sr_referral_code_error'] ) ) {
-            $error_message = $_SESSION['sr_referral_code_error'];
-            unset( $_SESSION['sr_referral_code_error'] );
+    // Nueva función para verificar si el usuario ha usado un código de referido antes
+    public static function has_used_referral_coupon_before( $user_id ) {
+        if ( ! $user_id ) {
+            return false;
         }
 
-        wp_localize_script( 'sr-referral-error-script', 'srReferralError', array(
-            'errorMessage' => $error_message,
+        // Obtener los pedidos completados del usuario
+        $customer_orders = wc_get_orders( array(
+            'customer_id' => $user_id,
+            'status'      => array( 'wc-completed', 'wc-processing', 'wc-on-hold' ), // Puedes ajustar los estados según tus necesidades
+            'limit'       => -1, // Sin límite
         ) );
 
-        // Encolar estilos si es necesario
-        wp_enqueue_style( 'sr-referral-error-styles', SR_PLUGIN_URL . 'assets/css/referral-error.css', array(), '1.0' );
+        if ( ! empty( $customer_orders ) ) {
+            foreach ( $customer_orders as $order ) {
+                $used_coupons = $order->get_coupon_codes();
+                foreach ( $used_coupons as $coupon_code ) {
+                    $coupon = new WC_Coupon( $coupon_code );
+                    $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
+                    if ( $is_referral_coupon === 'yes' ) {
+                        // El usuario ha usado un código de referido antes
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
+
+    public static function enqueue_referral_error_script() {
+        // Solo en páginas de carrito y checkout
+        if ( is_cart() || is_checkout() ) {
+            wp_enqueue_script( 'sr-referral-error-script', SR_PLUGIN_URL . 'assets/js/referral-error.js', array( 'jquery' ), '1.0', true );
+
+            $error_message = '';
+            if ( ! session_id() ) {
+                session_start();
+            }
+            if ( isset( $_SESSION['sr_referral_code_error'] ) ) {
+                $error_message = $_SESSION['sr_referral_code_error'];
+                unset( $_SESSION['sr_referral_code_error'] );
+            }
+
+            wp_localize_script( 'sr-referral-error-script', 'srReferralError', array(
+                'errorMessage' => $error_message,
+            ) );
+
+            // Encolar estilos si es necesario
+            wp_enqueue_style( 'sr-referral-error-styles', SR_PLUGIN_URL . 'assets/css/referral-error.css', array(), '1.0' );
+        }
+    }
+
 }
+
+// Inicializar la clase y registrar los hooks
+SR_WooCommerce_Integration::init();

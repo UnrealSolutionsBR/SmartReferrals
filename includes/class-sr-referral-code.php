@@ -27,7 +27,16 @@ class SR_Referral_Code {
 
         // Generate the new referral code
         $user_info = get_userdata( $user_id );
-        $username = strtoupper( substr( $user_info->user_login, 0, 6 ) );
+        $username = strtoupper( $user_info->user_login );
+
+        // Extract only the first part of the username before any spaces
+        if ( strpos( $username, ' ' ) !== false ) {
+            $username = substr( $username, 0, strpos( $username, ' ' ) );
+        }
+
+        // Ensure the username is no longer than 6 characters
+        $username = substr( $username, 0, 6 );
+
         $random_letters = strtoupper( substr( str_shuffle( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), 0, 3 ) );
         $referral_code = $random_letters . $username;
 

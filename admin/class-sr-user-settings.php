@@ -23,6 +23,12 @@ class SR_User_Settings {
 
         // Procesar formulario
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Generar nuevo código de referido
+            if (isset($_POST['generate_new_code'])) {
+                SR_Referral_Code::generate_referral_code($user_id);
+                echo '<div class="notice notice-success"><p>' . esc_html__('A new referral code was generated.', 'smart-referrals') . '</p></div>';
+            }
+
             // Guardar estado activo/inactivo
             if (isset($_POST['active_status'])) {
                 update_user_meta($user_id, 'active_status', 'active');
@@ -42,12 +48,21 @@ class SR_User_Settings {
         // Obtener valores actuales
         $active_status = get_user_meta($user_id, 'active_status', true);
         $paypal_email = get_user_meta($user_id, 'paypal_email', true);
+        $referral_code = get_user_meta($user_id, 'sr_referral_code', true);
         $checked = ($active_status === 'active' || empty($active_status)) ? 'checked' : '';
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('User Settings', 'smart-referrals'); ?></h1>
             <form method="post">
                 <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Referral Code', 'smart-referrals'); ?></th>
+                        <td>
+                            <input type="text" value="<?php echo esc_attr($referral_code); ?>" readonly class="regular-text" />
+                            <p class="description"><?php esc_html_e('This is the current referral code.', 'smart-referrals'); ?></p>
+                            <button type="submit" name="generate_new_code" class="button"><?php esc_html_e('Generate New Code', 'smart-referrals'); ?></button>
+                        </td>
+                    </tr>
                     <tr>
                         <th scope="row"><?php esc_html_e('Active Status', 'smart-referrals'); ?></th>
                         <td>

@@ -3,7 +3,7 @@
 Plugin Name: Smart Referrals
 Author: Unreal Solutions
 Author URI: https://www.unrealsolutions.com.br
-Version: 2.2.1
+Version: 2.2.2
 Requires at least: 6.6.2
 Description: Elevate your earnings with a powerful toolkit for effective referral management.
 */
@@ -73,10 +73,10 @@ class Smart_Referrals {
     }
 
     public function enqueue_admin_styles() {
-        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '2.2.1' );
+        wp_enqueue_style( 'sr-admin-styles', SR_PLUGIN_URL . 'assets/css/admin-styles.css', array(), '2.2.2' );
 
         // Enqueue admin scripts
-        wp_enqueue_script( 'sr-admin-scripts', SR_PLUGIN_URL . 'assets/js/admin-scripts.js', array( 'jquery' ), '2.2.1', true );
+        wp_enqueue_script( 'sr-admin-scripts', SR_PLUGIN_URL . 'assets/js/admin-scripts.js', array( 'jquery' ), '2.2.2', true );
 
         // Localize script for AJAX
         wp_localize_script( 'sr-admin-scripts', 'srAdminAjax', array(
@@ -86,14 +86,14 @@ class Smart_Referrals {
     }
 
     public function enqueue_frontend_styles() {
-        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '2.2.1' );
+        wp_enqueue_style( 'sr-frontend-styles', SR_PLUGIN_URL . 'assets/css/frontend-styles.css', array(), '2.2.2' );
 
         // Enqueue custom styles for the referral copy link
-        wp_enqueue_style( 'sr-referral-copylink-styles', SR_PLUGIN_URL . 'assets/css/referral-copylink.css', array(), '2.2.1' );
+        wp_enqueue_style( 'sr-referral-copylink-styles', SR_PLUGIN_URL . 'assets/css/referral-copylink.css', array(), '2.2.2' );
     }
 
     public function enqueue_frontend_scripts() {
-        wp_enqueue_script( 'sr-referral-copylink-script', SR_PLUGIN_URL . 'assets/js/referral-copylink.js', array( 'jquery' ), '2.2.1', true );
+        wp_enqueue_script( 'sr-referral-copylink-script', SR_PLUGIN_URL . 'assets/js/referral-copylink.js', array( 'jquery' ), '2.2.2', true );
 
         // Localize script for translation and data
         wp_localize_script( 'sr-referral-copylink-script', 'srCopyLink', array(

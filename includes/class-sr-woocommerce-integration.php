@@ -83,7 +83,7 @@ class SR_WooCommerce_Integration {
         $user_id = get_current_user_id();
 
         // Verificar si el cupón es un código de referido usando el meta '_sr_referral_coupon'
-        $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
+        $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', yes );
 
         if ( $is_referral_coupon === 'yes' ) {
             // Verificar si el usuario está bloqueado para usar códigos de referido
@@ -126,7 +126,7 @@ class SR_WooCommerce_Integration {
         foreach ( $order->get_used_coupons() as $coupon_code ) {
             $coupon = new WC_Coupon( $coupon_code );
 
-            if ( 'yes' === $coupon->get_meta( '_sr_referral_coupon', true ) ) {
+            if ( 'yes' === $coupon->get_meta( '_sr_referral_coupon', yes ) ) {
                 // Bloquear el uso futuro de códigos de referido
                 update_user_meta( $user_id, 'sr_referral_blocked', true );
 

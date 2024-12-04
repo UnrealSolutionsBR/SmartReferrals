@@ -11,14 +11,16 @@ class SR_WooCommerce_Integration {
         add_action( 'template_redirect', array( __CLASS__, 'apply_referral_coupon' ) );
         add_action( 'woocommerce_before_cart', array( __CLASS__, 'add_referral_coupon_to_cart' ) );
         add_action( 'woocommerce_before_checkout_form', array( __CLASS__, 'add_referral_coupon_to_cart' ) );
-        add_filter( 'woocommerce_coupon_is_valid_for_user', array( __CLASS__, 'validate_referral_coupon_for_user' ), 10, 3 );
 
-        // Hook to handle order completion in various statuses
+        // Filtrar la validez del cupón
+        add_filter( 'woocommerce_coupon_is_valid', array( __CLASS__, 'validate_referral_coupon_for_user' ), 10, 2 );
+
+        // Hook para manejar la finalización del pedido en varios estados
         add_action( 'woocommerce_order_status_completed', array( __CLASS__, 'handle_referral_after_purchase' ) );
         add_action( 'woocommerce_order_status_processing', array( __CLASS__, 'handle_referral_after_purchase' ) );
         add_action( 'woocommerce_order_status_on-hold', array( __CLASS__, 'handle_referral_after_purchase' ) );
 
-        // Enqueue the script for displaying referral errors
+        // Encolar el script para mostrar errores de referido
         add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_referral_error_script' ) );
     }
 
@@ -79,30 +81,24 @@ class SR_WooCommerce_Integration {
         }
     }
 
-    public static function validate_referral_coupon_for_user( $valid, $coupon, $user ) {
-        $user_id = get_current_user_id();
+    public static function validate_referral_coupon_for_user( $valid, $coupon ) {
+        // Obtener el ID del cupón
+        $coupon_id = $coupon->get_id();
 
-        // Verificar si el cupón es un código de referido usando el meta '_sr_referral_coupon'
-        $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', yes );
+        // Verificar si el cupón tiene el metadato '_sr_referral_coupon'
+        $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
 
         if ( $is_referral_coupon === 'yes' ) {
-            // Verificar si el usuario está bloqueado para usar códigos de referido
-            $has_used_referral_coupon = get_user_meta( $user_id, 'sr_referral_blocked', true );
+            // Obtener el ID del usuario actual
+            $user_id = get_current_user_id();
 
-            if ( $has_used_referral_coupon ) {
-                // Establecer mensaje de error para el usuario bloqueado
-                if ( ! session_id() ) {
-                    session_start();
-                }
-                $_SESSION['sr_referral_code_error'] = __( 'Ya has utilizado un código de referido anteriormente y no puedes usar otro.', 'smart-referrals' );
+            // Verificar si el usuario está bloqueado
+            $is_user_blocked = get_user_meta( $user_id, 'sr_referral_blocked', true );
 
-                // Remover el cupón del carrito si está aplicado
-                if ( WC()->cart->has_discount( $coupon->get_code() ) ) {
-                    WC()->cart->remove_coupon( $coupon->get_code() );
-                }
-
-                // Devolver false para indicar que el cupón no es válido
-                return false;
+            if ( $is_user_blocked ) {
+                // Bloquear el cupón para el usuario bloqueado
+                $valid = false;
+                wc_add_notice( __( 'Ya has utilizado un código de referido anteriormente y no puedes usar otro.', 'smart-referrals' ), 'error' );
             }
         }
 
@@ -126,7 +122,7 @@ class SR_WooCommerce_Integration {
         foreach ( $order->get_used_coupons() as $coupon_code ) {
             $coupon = new WC_Coupon( $coupon_code );
 
-            if ( 'yes' === $coupon->get_meta( '_sr_referral_coupon', yes ) ) {
+            if ( 'yes' === $coupon->get_meta( '_sr_referral_coupon', true ) ) {
                 // Bloquear el uso futuro de códigos de referido
                 update_user_meta( $user_id, 'sr_referral_blocked', true );
 

@@ -133,6 +133,18 @@ class SR_WooCommerce_Integration {
                 // Block future referral code storage and usage
                 update_user_meta( $user_id, 'sr_referral_blocked', true );
 
+                // Clear referral code from session, WooCommerce session, and cookies
+                if ( class_exists( 'WooCommerce' ) && isset( WC()->session ) ) {
+                    WC()->session->__unset( 'sr_referral_code' );
+                }
+
+                if ( ! session_id() ) {
+                    session_start();
+                }
+
+                unset( $_SESSION['sr_referral_code'] );
+                setcookie( 'sr_referral_code', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN );
+
                 break;
             }
         }

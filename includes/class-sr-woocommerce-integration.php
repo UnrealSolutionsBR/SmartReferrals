@@ -81,31 +81,31 @@ class SR_WooCommerce_Integration {
 
     public static function validate_referral_coupon_for_user( $valid, $coupon, $user ) {
         $user_id = get_current_user_id();
-
-        // Check if the coupon is a referral coupon using the meta '_sr_referral_coupon'
+    
+        // Verificar si el cupón es un código de referido
         $is_referral_coupon = $coupon->get_meta( '_sr_referral_coupon', true );
-
+    
         if ( $is_referral_coupon === 'yes' ) {
-            // Check if the user is blocked from using referral codes
+            // Verificar si el usuario tiene el metadato `sr_referral_blocked`
             $has_used_referral_coupon = get_user_meta( $user_id, 'sr_referral_blocked', true );
-
+    
             if ( $has_used_referral_coupon ) {
-                // Set error message for blocked user
+                // Establecer mensaje de error para el usuario
                 if ( ! session_id() ) {
                     session_start();
                 }
                 $_SESSION['sr_referral_code_error'] = __( 'You have already used a referral code before and cannot use another.', 'smart-referrals' );
-
-                // Remove the coupon from the cart if applied
+    
+                // Remover el cupón del carrito si ya está aplicado
                 if ( WC()->cart->has_discount( $coupon->get_code() ) ) {
                     WC()->cart->remove_coupon( $coupon->get_code() );
                 }
-
-                // Return false to indicate the coupon is not valid
+    
+                // Retornar falso para invalidar el cupón
                 return false;
             }
         }
-
+    
         return $valid;
     }
 

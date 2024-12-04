@@ -127,9 +127,6 @@ class SR_WooCommerce_Integration {
             $coupon = new WC_Coupon( $coupon_code );
 
             if ( 'yes' === $coupon->get_meta( '_sr_referral_coupon', true ) ) {
-                // Remove the referral code meta from the user
-                delete_user_meta( $user_id, 'sr_referral_code' );
-
                 // Block future referral code storage and usage
                 update_user_meta( $user_id, 'sr_referral_blocked', true );
 
